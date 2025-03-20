@@ -92,6 +92,77 @@ The tool will:
 4. Create an implementation guide
 5. Save results to `pagespeed_optimization_report.json`
 
+## Generating Actionable Performance Optimization Plans
+
+You can use the output from PageSpeed AI to generate comprehensive, actionable performance optimization plans with the help of AI. Here's how:
+
+1. Run the PageSpeed AI tool on your target website:
+   ```
+   python pagespeed_optimizer.py https://yourwebsite.com --extract-critical-css
+   ```
+
+2. Pass the generated JSON report to an AI model (such as ChatGPT or Claude) with the following prompt:
+
+   ```
+   I've analyzed a website using PageSpeed AI and need a detailed performance optimization plan.
+   Here's the JSON data from the analysis:
+
+   [PASTE THE CONTENTS OF pagespeed_optimization_report.json HERE]
+
+   I've also extracted critical CSS for the site:
+
+   [PASTE THE CONTENTS OF critical.css HERE]
+
+   Please create a comprehensive "Actionable Performance Optimization Plan" that includes:
+
+   1. A prioritized list of specific performance issues, ordered by impact
+   2. Step-by-step instructions to fix each issue, with specific code examples
+   3. Technical explanations for why each fix works
+   4. An implementation timeline (quick wins vs. long-term improvements)
+   5. Methods to measure the improvement after implementation
+
+   Format the plan in Markdown with clear headings and code blocks. Focus on practical,
+   actionable steps that can be implemented by developers.
+
+   Additional context:
+   - Website tech stack: [SPECIFY YOUR TECH STACK: e.g., WordPress, React, Vue, Angular, etc.]
+   - Target audience: [SPECIFY WHO WILL IMPLEMENT: e.g., junior developers, senior team, yourself]
+   - Hosting environment: [SPECIFY HOSTING: e.g., AWS, Netlify, shared hosting, etc.]
+   - Priority areas: [SPECIFY ANY PARTICULAR FOCUS: e.g., mobile performance, SEO, Core Web Vitals]
+   - Implementation timeframe: [SPECIFY URGENCY: e.g., immediate, next sprint, long-term project]
+   ```
+
+3. Save the AI-generated plan to a Markdown file (e.g., `optimization_plan.md`) for reference or sharing with your development team.
+
+For best results:
+- Include specific details about your tech stack in the prompt
+- Ask for explanations tailored to your team's expertise level
+- Request code examples in your specific programming languages/frameworks
+
+### Example
+
+See the `Eversite.md` file in this repository for an example of a detailed performance optimization plan generated using this method.
+
+### Including Critical CSS in Your Plan
+
+If you've extracted critical CSS using the `--extract-critical-css` flag, include it in your AI prompt for a more complete optimization plan:
+
+```
+I've analyzed a website using PageSpeed AI and need a detailed performance optimization plan.
+Here's the JSON data from the analysis:
+
+[PASTE THE CONTENTS OF pagespeed_optimization_report.json HERE]
+
+I've also extracted critical CSS for the site:
+
+[PASTE THE CONTENTS OF critical.css HERE]
+
+Please create a comprehensive "Actionable Performance Optimization Plan" that includes:
+...
+```
+
+This will allow the AI to provide more specific recommendations for CSS optimization, including exactly how to implement the critical CSS in your HTML and how to defer the loading of the remaining CSS.
+
 ## Features
 
 - Performance analysis using Lighthouse
