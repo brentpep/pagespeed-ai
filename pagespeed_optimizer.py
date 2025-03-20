@@ -9,6 +9,8 @@ import io
 import sys
 import argparse
 from critical_css_extractor import extract_critical_css
+from site_optimizer import optimize_and_test
+from urllib.parse import urlparse
 
 class WebsitePerformanceAnalyzer:
     def __init__(self, url, use_brave=True):
@@ -327,11 +329,39 @@ def main():
                         help='Use Chrome browser instead of Brave')
     parser.add_argument('--extract-critical-css', action='store_true',
                         help='Extract critical CSS for the analyzed URL')
+    parser.add_argument('--optimize-and-test', action='store_true',
+                        help='Create an optimized local version and run comparative tests')
+    parser.add_argument('--output-dir', default=None,
+                        help='Directory to save the optimized site (default: ./implementation-tests/<domain>)')
     args = parser.parse_args()
 
     url = args.url
     use_brave = args.use_brave
     extract_critical = args.extract_critical_css
+
+    # Extract domain name from URL for organizing outputs
+    domain = urlparse(url).netloc
+    if not domain:
+        domain = "example-com"  # Default if URL parsing fails
+
+    # Create reports directory if it doesn't exist
+    reports_dir = os.path.join("reports", domain)
+    os.makedirs(reports_dir, exist_ok=True)
+
+    # Set output directory for optimization tests
+    if args.output_dir:
+        output_dir = args.output_dir
+    else:
+        implementation_tests_dir = os.path.join("implementation-tests", domain)
+        output_dir = implementation_tests_dir
+
+    # If optimize-and-test flag is set, run that workflow
+    if args.optimize_and_test:
+        print(f"Starting optimization and testing of {url}...")
+        # Create implementation-tests directory if it doesn't exist
+        os.makedirs(os.path.dirname(output_dir), exist_ok=True)
+        optimize_and_test(url, output_dir)
+        return
 
     print(f"Analyzing {url}...")
     print(f"Using {'Brave' if use_brave else 'Chrome'} browser...")
@@ -365,20 +395,22 @@ def main():
             'implementation_guide': implementation_guide
         }
 
-        # Output report
+        # Output report to domain-specific directory
+        report_file = os.path.join(reports_dir, 'pagespeed_optimization_report.json')
         print("Saving report...")
-        with open('pagespeed_optimization_report.json', 'w') as f:
+        with open(report_file, 'w') as f:
             json.dump(report, f, indent=2)
 
         print(f"Analysis complete. Current score: {analysis_results['performance_score']}")
         print(f"Potential improvement: {implementation_guide['estimated_score_improvement']['percentage_improvement']}")
-        print(f"Report saved to pagespeed_optimization_report.json")
+        print(f"Report saved to {report_file}")
 
-        # Save critical CSS to a separate file if extracted
+        # Save critical CSS to the reports directory if extracted
         if extract_critical and recommender.critical_css:
-            with open('critical.css', 'w') as f:
+            css_file = os.path.join(reports_dir, 'critical.css')
+            with open(css_file, 'w') as f:
                 f.write(recommender.critical_css)
-            print("Critical CSS saved to critical.css")
+            print(f"Critical CSS saved to {css_file}")
 
     except Exception as e:
         print(f"Error during analysis: {e}")

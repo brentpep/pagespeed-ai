@@ -1,12 +1,20 @@
-# PageSpeed AI
+# PageSpeed AI for Cursor Pro
 
-A tool for analyzing website performance using Google Lighthouse and providing AI-powered optimization recommendations.
+A zero-configuration tool for analyzing website performance using Google Lighthouse and providing AI-powered optimization recommendations. Designed specifically for Cursor Pro users, this tool requires no API keys or external service accounts.
+
+## Why PageSpeed AI for Cursor Pro?
+
+- **No API Keys Required**: Works entirely with local tools and Cursor Pro's built-in AI capabilities
+- **End-to-End Workflow**: Analyze sites with Lighthouse and generate optimization plans using Cursor Pro
+- **Zero Configuration**: Just install the dependencies and start optimizing websites
+- **Seamless Integration**: Results can be directly used with Cursor Pro's AI features
 
 ## Prerequisites
 
 - Python 3.7+
 - Node.js and npm (for Lighthouse)
 - Chrome or Brave browser
+- Cursor Pro (for AI-powered optimization plans)
 
 ## Installation
 
@@ -55,7 +63,7 @@ python pagespeed_optimizer.py https://example.com --use-chrome
 
 ### Extract Critical CSS
 
-The tool can now automatically extract critical CSS for above-the-fold content:
+The tool can automatically extract critical CSS for above-the-fold content:
 
 ```
 python pagespeed_optimizer.py https://example.com --extract-critical-css
@@ -81,6 +89,40 @@ You can then use this critical CSS directly in your HTML by adding it to the `<h
 </head>
 ```
 
+### Optimize and Test
+
+The tool can create an optimized local version of a website and run comparative tests:
+
+```
+python pagespeed_optimizer.py https://example.com --optimize-and-test
+```
+
+This will:
+1. Fetch the original website and download all resources (CSS, JS, images, fonts)
+2. Create a local optimized version with best practices applied:
+   - Inline critical CSS
+   - Add defer/async attributes to scripts
+   - Optimize images (WebP conversion, compression)
+   - Add width/height attributes to images
+   - Implement lazy loading for below-the-fold images
+   - Add resource hints (preconnect, dns-prefetch)
+   - Set cache control headers
+3. Run Lighthouse tests on both original and optimized versions
+4. Generate a comprehensive comparison report showing performance improvements
+
+By default, all files will be saved to `implementation-tests/<domain>/`, where `<domain>` is extracted from the URL. You can also specify a custom output directory:
+
+```
+python pagespeed_optimizer.py https://example.com --optimize-and-test --output-dir=./my_optimized_site
+```
+
+The output includes:
+- `implementation-tests/<domain>/index.html` - The optimized version of the website
+- `implementation-tests/<domain>/comparison_report.html` - Visual HTML report comparing performance metrics
+- `implementation-tests/<domain>/<domain>-optimization-results.md` - Markdown summary of improvements
+
+This feature provides a proof-of-concept that demonstrates exactly how much your site could improve with the recommended optimizations.
+
 If no URL is provided, it will default to "https://example.com".
 
 ## Output
@@ -90,30 +132,29 @@ The tool will:
 2. Extract DOM structure and resources
 3. Generate performance optimization recommendations
 4. Create an implementation guide
-5. Save results to `pagespeed_optimization_report.json`
+5. Save results to organized directories:
+   - Analysis reports: `reports/<domain>/pagespeed_optimization_report.json`
+   - Critical CSS: `reports/<domain>/critical.css`
+   - Optimization tests: `implementation-tests/<domain>/`
 
-## Generating Actionable Performance Optimization Plans
+This directory structure helps keep your analysis and implementation tests organized by domain.
 
-You can use the output from PageSpeed AI to generate comprehensive, actionable performance optimization plans with the help of AI. Here's how:
+## Using with Cursor Pro for AI-Powered Optimization Plans
+
+The primary advantage of PageSpeed AI for Cursor Pro is the seamless integration with Cursor Pro's AI capabilities. You can generate comprehensive, actionable performance optimization plans directly within Cursor:
 
 1. Run the PageSpeed AI tool on your target website:
    ```
    python pagespeed_optimizer.py https://yourwebsite.com --extract-critical-css
    ```
 
-2. Pass the generated JSON report to an AI model (such as ChatGPT or Claude) with the following prompt:
+2. Use Cursor Pro to open the generated JSON report and critical CSS files.
+
+3. Ask Cursor Pro to create an optimization plan with a prompt like:
 
    ```
-   I've analyzed a website using PageSpeed AI and need a detailed performance optimization plan.
-   Here's the JSON data from the analysis:
-
-   [PASTE THE CONTENTS OF pagespeed_optimization_report.json HERE]
-
-   I've also extracted critical CSS for the site:
-
-   [PASTE THE CONTENTS OF critical.css HERE]
-
-   Please create a comprehensive "Actionable Performance Optimization Plan" that includes:
+   I've analyzed a website using PageSpeed AI. Based on the open files,
+   please create a comprehensive "Actionable Performance Optimization Plan" that includes:
 
    1. A prioritized list of specific performance issues, ordered by impact
    2. Step-by-step instructions to fix each issue, with specific code examples
@@ -132,36 +173,13 @@ You can use the output from PageSpeed AI to generate comprehensive, actionable p
    - Implementation timeframe: [SPECIFY URGENCY: e.g., immediate, next sprint, long-term project]
    ```
 
-3. Save the AI-generated plan to a Markdown file (e.g., `optimization_plan.md`) for reference or sharing with your development team.
-
-For best results:
-- Include specific details about your tech stack in the prompt
-- Ask for explanations tailored to your team's expertise level
-- Request code examples in your specific programming languages/frameworks
-
 ### Example
 
-See the `Eversite.md` file in this repository for an example of a detailed performance optimization plan generated using this method.
+See the `results/Eversite.md` file in this repository for an example of a detailed performance optimization plan generated using this method.
 
 ### Including Critical CSS in Your Plan
 
-If you've extracted critical CSS using the `--extract-critical-css` flag, include it in your AI prompt for a more complete optimization plan:
-
-```
-I've analyzed a website using PageSpeed AI and need a detailed performance optimization plan.
-Here's the JSON data from the analysis:
-
-[PASTE THE CONTENTS OF pagespeed_optimization_report.json HERE]
-
-I've also extracted critical CSS for the site:
-
-[PASTE THE CONTENTS OF critical.css HERE]
-
-Please create a comprehensive "Actionable Performance Optimization Plan" that includes:
-...
-```
-
-This will allow the AI to provide more specific recommendations for CSS optimization, including exactly how to implement the critical CSS in your HTML and how to defer the loading of the remaining CSS.
+If you've extracted critical CSS, Cursor Pro can provide more specific recommendations for CSS optimization, including exactly how to implement the critical CSS in your HTML and how to defer the loading of the remaining CSS.
 
 ## Features
 
@@ -169,6 +187,9 @@ This will allow the AI to provide more specific recommendations for CSS optimiza
 - Critical issue identification
 - Prioritized optimization recommendations
 - Implementation guide with code examples
+- Critical CSS extraction for above-the-fold content
+- Automatic optimization and comparative testing
+- Visual performance improvement reports
 - (Prototype) Automated image optimization
 
 ## Limitations
